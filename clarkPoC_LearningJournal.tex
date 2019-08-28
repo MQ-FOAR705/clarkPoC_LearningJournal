@@ -1,0 +1,58 @@
+%%% SETUP %%%
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{titling}
+\usepackage{setspace}
+\usepackage{hyperref}
+\setcounter{secnumdepth}{0} %Table of contents without numbers
+
+\newcommand{\subtitle}[1]{%
+  \posttitle{%
+    \par\end{center}
+    \begin{center}\large#1\end{center}
+    \vskip0.5em}%
+}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+}
+
+%%%%% /SETUP %%%%%
+%%%%% Title page %%%%%
+\title{Proof of Concept - Learning Journal}
+\subtitle{FOAR705 2019}
+\author{Matthew Clark\\43695841}
+\date{\vspace{-5ex}} %Used to remove date when using \maketitle%
+\begin{document}
+\doublespacing
+\maketitle
+%%%%% /Title Page %%%%%
+%%%%% Table of Contents %%%%%
+\newpage
+\tableofcontents
+%%%%% /Table of Contents %%%%%
+%%%%% Entry 1 %%%%%
+\newpage
+\section{What is an API? Using Beatport's API}
+\subsection{Understanding an API}
+\textbf{Objective:} To understand what an API is and how I can use an API.\\
+\textbf{Action:} Watched the following videos:
+\begin{itemize}
+    \item \url{https://www.youtube.com/watch?v=IAFN2UzN784}
+    \item \url{https://www.youtube.com/watch?v=1yFggyk--Zo}
+\end{itemize}
+\textbf{Analysis:} What I gathered are the following points:
+\begin{itemize}
+    \item An API (Application Programming Interface) is like a gateway which allows your computer to talk to a company's server to retrieve information from it's database. To do so, it requires specific instructions that is laid out in the specific API's documentation
+    \item An API Key is like an access username \& password, which grants you access to the API, and hence the database. Because this API is tied to your personal information, it is important not to disclose your API Key to anyone, just like a password, as it can be used to breach the server in malicious attacks.
+\end{itemize}
+\textbf{Result:} Understood the basics of what an API is.
+\subsection{Gaining access to Beatport's API: Gaining a key}
+\textbf{Objective:} To gain an API key in order to access Beatport's API\\
+\textbf{Action:} The only way I could figure out how to gain an API key was to email the API team \href{https://groups.google.com/forum/#!topic/beatport-api/dUk2nmhDnRo}{directly}, as there is no link or website that you can use to sign up for one. Hence, I sent an email to \verb|api@beatport.com|
+\textbf{Result:} Sent an email to the API team at beatport requesting an API key for research purposes.
+
+
+
+\end{document}
