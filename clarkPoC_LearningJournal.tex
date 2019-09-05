@@ -205,6 +205,7 @@ Hence, I will need to analyse alternative routes at this stage.\\
     \begin{itemize}
         \item Happened when running \texttt{rails server}. Added \texttt{gem 'tzinfo-data'} to the gemfile and ran \texttt{bundle install}
     \end{itemize}
+    \item When opening my app using \texttt{heroku open}, my web dynos had not crashed with an unresolvable error, but instead I was met with a 404 message, and after searching the web, I was not able to resolve it.
 \end{itemize}
 \textbf{Analysis:} I would say I got pretty far into this, however I couldn't figure out what to do next. The problem I would say includes:
 \begin{itemize}
@@ -212,7 +213,8 @@ Hence, I will need to analyse alternative routes at this stage.\\
     \item Confusion about a lot of the heroku lingo
     \item I didn't even get up to the MongoDB section, and the documentation didn't seem overly helpful either.
 \end{itemize}
-I did improve my knowledge in these fields, and using Window's version of shell (Command Prompt).\\
+My biggest issue is everytime I tried to do the same thing or do the same command, I was met with a different warning about a missing bundle, a bundle version variance, a missing piece of code, a potential error down the track, or a totally left field error to do with Java (which makes sense since it builds off JRuby), which caught me off guard since I wasn't even manipulating any Java files. The complexity of the set up mean't I could never fully resolve everything all the time, and hence I was met with different results at different stages.
+In saying that, I did improve my knowledge generally when it comes to cloud services and databases storages, and even got the basics of what Ruby is, what Rails is, and how Ruby on Rails works. I also got to test out my shell skills by using Window's version of shell (Command Prompt).\\
 \textbf{Result:} Was unable to fully set up the Traxsource API. Due to scope, I will try to configure another API.
 \section{Discogs' API}
 \subsection{Using an example script using Python to access the Discogs API}
