@@ -1,10 +1,19 @@
 %%% SETUP %%%
+\RequirePackage[hyphens]{url} 
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 \usepackage{titling}
 \usepackage{setspace}
 \usepackage{hyperref}
-\setcounter{secnumdepth}{0} %Table of contents without numbers
+\usepackage{titlesec}
+%\setcounter{secnumdepth}{0} %Table of contents without numbers
+
+%https://tex.stackexchange.com/questions/3033/forcing-linebreaks-in-url
+\usepackage{url}
+\makeatletter
+\g@addto@macro{\UrlBreaks}{\UrlOrds}
+\makeatother
+
 
 \newcommand{\subtitle}[1]{%
   \posttitle{%
@@ -12,11 +21,19 @@
     \begin{center}\large#1\end{center}
     \vskip0.5em}%
 }
+
 \hypersetup{
     colorlinks=true,
-    linkcolor=black,
+    linkcolor=blue,
     urlcolor=blue,
 }
+
+\titlespacing*{\section}
+{0pt}{5.5ex plus 1ex minus .2ex}{4.3ex plus .2ex}
+\titlespacing*{\subsection}
+{0pt}{5.5ex plus 1ex minus .2ex}{4.3ex plus .2ex}
+%(https://tex.stackexchange.com/questions/108684/spacing-before-and-after-section-titles)%
+
 
 %%%%% /SETUP %%%%%
 %%%%% Title page %%%%%
@@ -48,11 +65,249 @@
     \item An API Key is like an access username \& password, which grants you access to the API, and hence the database. Because this API is tied to your personal information, it is important not to disclose your API Key to anyone, just like a password, as it can be used to breach the server in malicious attacks.
 \end{itemize}
 \textbf{Result:} Understood the basics of what an API is.
+%%%%
 \subsection{Gaining access to Beatport's API: Gaining a key}
+%%%%%
 \textbf{Objective:} To gain an API key in order to access Beatport's API\\
-\textbf{Action:} The only way I could figure out how to gain an API key was to email the API team \href{https://groups.google.com/forum/#!topic/beatport-api/dUk2nmhDnRo}{directly}, as there is no link or website that you can use to sign up for one. Hence, I sent an email to \verb|api@beatport.com|
+\textbf{Action:} The only way I could figure out how to gain an API key was to email the API team \href{https://groups.google.com/forum/#!topic/beatport-api/dUk2nmhDnRo}{directly}, as there is no link or website that you can use to sign up for one. Hence, I sent an email to \verb|support@beatport.com|\\
 \textbf{Result:} Sent an email to the API team at beatport requesting an API key for research purposes.
+%%%%%
+\subsection{Unable to get an API key from Beatport}
+%%%%%
+\textbf{Objective:} To gain an API key from Beatport\\
+\textbf{Action:} Received an email from the Support team at beatport. Unfortunately, they stated:\\
+\texttt{Thank you for your interest. At this time our Technology Teams \\will not be issuing any new API keys.\\
+Unfortunately, there are no immediate plans for an open API or \\keyed access. I apologize for the inconvenience.\\
+}
+Hence, I will need to analyse alternative routes at this stage.\\
+\textbf{Result:} Unable to gain an API key for Beatport's API, and will have to devise an alternative strategy.
+%%%%% Entry 2 %%%%%
+\section{Using Traxsource's API}
+\subsection{Learning how to use Heroku + JRuby + Postgres}
+\textbf{Objective:} Traxsource doesn't have a general API for use, however there has been developed access to it's API through Heroku. Hence, my objective is to access Traxsource's API via Heroku.\\
+\textbf{Action:}
+\begin{enumerate}
+    \item Start with the following link:\\ \url{https://traxsource-api.readthedocs.io/en/latest/setup/}
+    \item Sign up for both Heroku and MongoDB
+    \item Go to: 'Getting Started with Ruby on Rails with Heroku':\\
+    \url{https://devcenter.heroku.com/articles/getting-started-with-jruby}
+    \item Install the x64 JDK from Oracle
+    \item Install the x64 JRuby executable
+    \item Install the bundler by navigating the command directory to the JRuby folder using \texttt{cd} and run the following command to install the bundle:\\
+    \verb|jruby -S gem install bundler|
+    \item Install the Heroku Command Line Interface
+    \item Open Windows Powershell
+    \item Login to Heroku by using the command \texttt{heroku login}
+    \item Clone the 'Getting Started' Git Repository using the commands\\
+    \texttt{git clone https://github.com/heroku/jruby-getting-started.git}\\
+    \verb|cd jruby-getting-started||
+    \item Create a Heroku app by using the command \texttt{heroku create}
+    \item Deploy your code using the following command:\\
+    \verb|git push heroku master|
+    \item Instantiate the app using the command: \\
+    \verb|heroku ps:scale web=1|
+    \item Open the app using the following command:\\
+    \verb|heroku open|
+    \item Install \hyperlink{PostgreSQL}{https://devcenter.heroku.com/articles/heroku-postgresql}
+    \item Update your PATH environment variable to add the bin directory of your Postgres installation:\\
+    \verb|$env:Path += ";SomeRandomPath"|
+\end{enumerate}
+\textbf{Errors:}
+\begin{itemize}
+    \item When trying to install JRuby on my machine, it couldn't identify my JRE. When locating it, it stated it was broken, however I figured it was because I was installing a x64 version of JRuby, while having a x32 version of the JRE. Installing the newest x64 JRE fixed this problem.
+    \item \verb|Your Ruby version is 2.5.3, but your Gemfile specified 2.3.1|\\
+    This \hyperlink{https://stackoverflow.com/questions/52055992/your-ruby-version-is-2-5-1-but-your-gemfile-specified-2-4-0}{StackOverflow Answer} stated I should just open the Gemfile (which I figured out can simply be opened in \verb|Notepad++| and change the file version.
+    \item While executing gem ... (Errno::EACCES)\\
+    Tried running Command Prompt as an Administrator and fixed the error.
+    \item This Gemfile requires a different version of Bundler.\\
+    Followed \hyperlink {https://stackoverflow.com/questions/12092928/how-to-bundle-install-when-your-gemfile-requires-an-older-version-of-bundler}{this tip} to install a compatible bundler version, which I found \hyperlink{https://rubygems.org/gems/bundler/versions}{here}, and used the command \verb|bundle _1.0.22_ install| to install it.
+    \item While executing the command\\\verb|jruby -S bin\rake db:create db:migrate --trace|\\I was met with multiple errors, and was not able to resolve them. 
+\end{itemize}
+\textbf{Analysis:} Commands useful for future use include:
+\begin{itemize}
+    \item View Logs: \verb|heroku logs --tail|
+    \begin{itemize}
+        \item To stop logs: Ctrl+C
+    \end{itemize}
+    \item To view your Procfile (A text file at the root of your app with the command used to explicitly start your app):\\
+    \verb|type Procfile|
+    \item To scale your app:\\
+    \verb|heroku ps:scale web=1|
+    \item To read a Ruby on Rails file, install the appropriate Ruby version and all of its dependencies:\\
+    \verb|jruby -S bundle install|\\
+    (\url{https://devcenter.heroku.com/articles/getting-started-with-jruby\#declare-app-dependencies})
+\end{itemize}
+\textbf{Result:} Got half way through the introduction to Heroku, however I was unable to run my app \hyperlink{https://devcenter.heroku.com/articles/getting-started-with-jruby\#run-the-app-locally}{locally}. Things to try next time:
+\begin{itemize}
+    \item Re-install Postgres and see if that solves anything
+    \item Go back through the documentation and see if I missed any steps:\\
+    \url{https://devcenter.heroku.com/articles/getting-started-with-jruby\#run-the-app-locally}\\
+    \url{https://devcenter.heroku.com/articles/heroku-postgresql\#local-setup}
+    \item If I can't get the demo to work, try following the demo instructions, but use the Traxsource API Ruby files from Github, and see if I have enough knowledge to use it.
+\end{itemize}
+\subsection{Setting up Traxsource API + Ruby on Rails + Heroku + MongoDB}
+\textbf{Objective:} To attempt to set up the following such that all components run correctly with one another:
+\begin{itemize}
+    \item Traxsource API, which is built with Ruby on Rails
+    \item Heroku with Ruby on Rails and Git
+    \item Heroku with the MongoDB add-on
+\end{itemize}
+\textbf{Action:}
+\begin{enumerate}
+    \item Download a fresh version of Ruby, Rails, and Bundler at:\\ \url{http://railsinstaller.org/en}
+    \item Download the \hyperlink{https://github.com/janosrusiczki/traxsource-api}{Traxsource API} from Github
+    \item Open Command Prompt with Ruby on Rails as Administrator
+    \item Navigate to traxsource-api-master in cmd
+    \item Login to Heroku using \texttt{heroku login}
+    \item Check rails version in traxsource api: \texttt{rails -v}
+    \item Run the command \texttt{bundle install} to install missing gemfiles
+    \item Run the command \texttt{gem install bundler --pre} to update the bundler
+    \item Re-run \texttt{bundle install} to update the lockfile to Bundler 2.
+    \item Run \texttt{rails server} to start rails
+    \item Open \texttt{localhost:3000} to verify that Rails is running
+    \item Create a git directory and commit using the following commands:
+    \begin{enumerate}
+        \item \texttt{git init}
+        \item \texttt{git add .}
+        \item \texttt{git commit -m "init"}
+    \end{enumerate}
+    \item Create an app on heroku using \texttt{heroku create}
+    \item Deploy the code using \texttt{git push heroku master}
+    \item Migrate the database using \texttt{heroku run rake db:migrate}
+    \item Scale up the dynos using \texttt{heroku ps:scale web=1}
+    \item Open up Heroku app using \texttt{heroku open}
+\end{enumerate}
+\textbf{Errors:}
+\begin{itemize}
+    \item \texttt{Could not find rake-12.3.2 in any of the sources\\
+    Run 'bundle install' to install missing gems.}
+    \begin{itemize}
+        \item Run \texttt{bundle install} to install missing gems
+    \end{itemize}
+    \item \texttt{The latest bundler is 2.1.0.pre.1, but you are currently\\ running 1.15.3.\\
+    To update, run 'gem install bundler --pre'}
+    \begin{itemize}
+        \item Run the command \texttt{gem install bundler --pre} to update bundler
+    \end{itemize}
+    \item \verb|HEADS UP - i18n 1.1 changed fallbacks to exclude default locale.|\\
+    \verb|But that may break your application.|\\
+    \verb|Please check your Rails app for 'config.i18n.fallbacks = true'|\\
+    \verb|If you're using I18n (>= 1.1.0) and Rails (< 5.2.2),|
+    \verb|this should be the following:| 
+    \verb|'config.i18n.fallbacks = [I18n.default_locale]'.|\\
+    \verb|If not, fallbacks will be broken in your app by I18n 1.1.x.|\\
+    \verb|For more info see:|\\
+    \url{https://github.com/svenfuchs/i18n/releases/tag/v1.1.0}
+    \begin{itemize}
+        \item Searched through the code until I found \texttt{config/environments/production.rb} and found the \texttt{config.i18n.fallbacks} line, and replaced \texttt{true} with \verb|[I18n.default_locale]|
+    \end{itemize}
+    \item \texttt{tzinfo-data is not present. Please add gem 'tzinfo-data' to your Gemfile and run bundle install (TZInfo::DataSourceNotFound)}
+    \begin{itemize}
+        \item Happened when running \texttt{rails server}. Added \texttt{gem 'tzinfo-data'} to the gemfile and ran \texttt{bundle install}
+    \end{itemize}
+\end{itemize}
+\textbf{Analysis:} I would say I got pretty far into this, however I couldn't figure out what to do next. The problem I would say includes:
+\begin{itemize}
+    \item Lack of knowledge about ruby and rails
+    \item Confusion about a lot of the heroku lingo
+    \item I didn't even get up to the MongoDB section, and the documentation didn't seem overly helpful either.
+\end{itemize}
+I did improve my knowledge in these fields, and using Window's version of shell (Command Prompt).\\
+\textbf{Result:} Was unable to fully set up the Traxsource API. Due to scope, I will try to configure another API.
+\section{Discogs' API}
+\subsection{Using an example script using Python to access the Discogs API}
+\textbf{Objective:} To use an example python script to set up the basics in order to access the Discogs API.\\
+\textbf{Action:}
+\begin{enumerate}
+    \item Download the newest version of Python 2 (as this example script is written in Python 2, not Python 3)
+    \item Open up Pycharm IDE
+    \item Download the example python script from github:\\
+    \url{https://github.com/jesseward/discogs-oauth-example}
+    \item Create a new directory, unzip the python script folder, and place script in the new directory
+    \item In PyCharm, go \texttt{File -> Open} and navigate to the directory, and open it.
+    \item Go to \texttt{File -> Settings -> Project -> Project Interpreter -> List box -> Show All} \& switch to Python 2.7 if not selected.
+    \item When the warning bar appears about missing Packages, click \texttt{install}.
+    \item Back to the browser, go to the developer page in Discogs and create an account
+    \item Follow link sent to chosen email to verify
+    \item Click on 'Create Application'
+    \item Create a title and description for the application, and hit save
+    \item Copy the Consumer Key \& Consumer Secret, and paste it in the \verb|consumer_key| and \verb|consumer_secret| fields in both the example client and main.
+    \item In both Python files, adjust the \verb|user_agent| field to something unique, to avoid a bad response.
+    \item Run the python script
+    \item Pycharm's running trace will direct you to a URL. Click on url and copy the Verification code.
+    \item Type in \texttt{Y} when prompted
+    \item Paste in verification code and hit \texttt{Enter}
+    \item The OAuth Access token will be given, and the script will run, which produces a result given by the example script before terminating
+\end{enumerate}
+\textbf{Errors:}
+\begin{itemize}
+    \item When first loading the example script in PyCharm, a lot of the syntax were causing errors. Since the script is at least 4 years old, I assumed it was using Python 2, not Python 3, which I had previously set up Pycharm in.
+    \begin{itemize}
+        \item \textbf{Solved By}: Downloading and Installing Python 2, then adding it as a Project Interpreter in Pycharm. Pycharm then automatically downloaded all necessary packages and the script fixed itself completely. First run and it worked without any errors
+    \end{itemize}
+\end{itemize}
+\textbf{Analysis:} From this I was finally able to interface with a database. Although Discogs' database is not as simple as something like Beatport or Traxsource, it certainly has a lot of data to access.\\
+I also found, because the example script is set up as an example, every time I ran it, I would have to go through the same authentication stages, which would create a new user in my Discogs' application. So, my next stage is to condense the script by copying over what is necessary and filling in any variables with the fixed keys I attained during one of the Authentications.\\
+\textbf{Result:} Successfully set up and ran the example python script to interact with the Discogs API.
 
+\subsection{Condensing example python script to do basic search}
+\textbf{Objective:} To condense the example python code into a new project in order to use the same authentication codes, such that I can start to manipulate search functions to search for Techno music.\\
+\textbf{Action:}
+\begin{enumerate}
+    \item Create a new Python project in Pycharm to run side-by-side the example project
+    \item Create 2 Python files: One as the client, and one as the main.
+    \item Starting with the Client, copy the following sections from the example:
+    \begin{itemize}
+        \item \texttt {import} statements
+        \item \verb|consumer_key| and replace the placeholder with the consumer key received when creating a Discogs' application
+        \item \verb|consumer_secret| ad lib.
+        \item \verb|user_agent| with the unique field
+        \item \verb|discogsclient = discogs_client.Client(user_agent)|
+        \item \verb|discogsclient.set_consumer_key(consumer_key, consumer_secret|
+        \item \verb|user = discogsclient.identity()|
+        \item \verb|search_results| line, which is used to manipulate the data
+        \item The block of print statements which prints the retrieved data.
+    \end{itemize}
+    \item Copy the following sections from the example into your main python file:
+    \begin{itemize}
+        \item \texttt {import} statements
+        \item \verb|consumer_key| and replace the placeholder with the consumer key received when creating a Discogs' application
+        \item \verb|consumer_secret| ad lib.
+        \item \verb|user_agent| with the unique field
+        \item The 2 lines which initialize the \texttt{consumer} and \texttt{client} variables
+        \item The \verb|oauth_verifier| line, and replace the placeholder with the verification token
+        \item The following lines, and replacing the placeholders with the OAuth tokens \& verification code received:
+        \begin{itemize}
+            \item \texttt{token = oauth.Token('Request\_token', 'Request\_token\_secret')}
+            \item \texttt{token.set\_verifier(oauth\_verifier)}
+            \item \texttt{client = oauth.Client(consumer, token}
+            \item \texttt{token = oauth.Token(key='Access\_token', \\'secret='Access\_token\_secret')}
+            \item {client = oauth.Client(consumer, token)}
+        \end{itemize}
+        \item The \texttt{resp, content = client.request())} line, which contains an API search link.
+        \item \texttt{releases = json.loads(context)}
+        \item The block of print statements which prints the retrieved data.
+    \end{itemize}
+    \item Adjust the fields in the client's \texttt{search\_results} variable to the following: \texttt{style='Techno', year='2019'}.
+    \item Adjust the \texttt{client.request} link to include the same fields, but formatted as a url link: \texttt{style=Techno\&year=2019\&per\_page=100}.
+    \item Run the program.
+\end{enumerate}
+\textbf{Errors:} This process was a matter of trial and error, so errors simply meant one of the following:
+\begin{itemize}
+    \item I forgot to copy the variable initialization over
+    \item Formatting issues
+    \item Misspelling
+\end{itemize}
+Once I got it all sorted, it ran just as expected.\\
+\textbf{Analysis:} Running this script produced a list of 100 releases, which were categorised as \textit{Techno}, and released in 2019. After redoing the search manually in the Discogs website, I was able to confirm that it simply took the data from the same webpage and printed it down, along with all the other fields from the example including Artist, Title, Year, Labels, Cat No., and Formats, which it did in about 5 seconds.\\
+It is easy to analyse the potential of this: Copying this data down for 100 files in an excel spreadsheet would take at least 30 minutes, where this did it in about 5 seconds.\\
+The next goals in using this API include:
+\begin{itemize}
+    \item Finding ways to 'go to the next page', something that the API documentation calls \textbf{Pagination}.
+    \item Sorting the data not by release date, but by another variable (Eg: 'Hot', 'Most Collected', 'Most Wanted')
+    \item Converting the collected data into an excel spreadsheet.
+\end{itemize}
+\textbf{Results:} Successfully modified the existing example python script to avoid creating new users to be authenticated and successfully manipulated the search fields to show the most recent 100 techno releases on Discogs.
 
 
 \end{document}
